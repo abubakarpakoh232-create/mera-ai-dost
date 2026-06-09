@@ -1,62 +1,62 @@
-# ===============================================
-# Abu Bakar ka AI Dost - Streamlit + Gemini AI
-# Version: 1.2 - All-in-One Safe Auto Version
-# ===============================================
-
 import streamlit as st
 import google.generativeai as genai
 
-# Page Configuration
-st.set_page_config(page_title="Mera AI Dost 🤖", page_icon="🤖")
-st.title("Mera AI Dost 🤖")
-st.write("Abu Bakar ka AI Dost - Sawal poocho jawab lo")
+# 1. Page Configuration (Sabse upar hona zaroori hai)
+st.set_page_config(page_title="Mera AI Dost", page_icon="🤖", layout="centered")
 
-# API Key Setup (Auto-Detect)
-# Ye code khud hi check karega ke key kahan majood hai
-api_key = None
-
-if "GEMINI_API_KEY" in st.secrets:
+# 2. Gemini API Key Configuration
+try:
+    # Secrets se key uthana
     api_key = st.secrets["GEMINI_API_KEY"]
-else:
-    # Agar secrets kaam na karein to aap ki di hui key backup ke tor par chalegi
-    
-
-# Gemini ko configure karein
-if api_key:
     genai.configure(api_key=api_key)
-else:
-    st.error("API Key nahi mili! Pehle key set karein.")
+    
+    # Bilkul standard aur stable model call karna
+    model = genai.GenerativeModel("gemini-1.5-flash")
+except Exception as e:
+    st.error("API Key missing hai ya Streamlit Secrets mein sahi se nahi likhi gayi!")
 
-# Model setup
-model = genai.GenerativeModel('gemini-1.5-flash')
+# 3. Interface Headers
+st.title("Mera AI Dost 🤖")
+st.write("Abu Bakar ka AI Dost")
 
-# Chat History Session State
+# 4. Chat History (Session State) Initialize karna
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Purane messages screen par dikhane ke liye
+# 5. Purani chat history ko filter karke screen par dikhana
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    if message.get("content") and str(message["content"]).strip() != "None":
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-# User input aur Response generation
+# 6. Chat Input aur Response Logic
 if prompt := st.chat_input("Kya poochna hai?"):
     
-    # User ka message dikhao
+    # User ka message screen par dikhana aur history mein save karna
     with st.chat_message("user"):
         st.markdown(prompt)
-    
-    # AI ka jawab generate karo
-    with st.chat_message("assistant"):
-        try:
-            response = model.generate_content(prompt)
-            st.markdown(response.text)
-            
-            # History mein save karein
-            st.session_state.messages.append({"role": "user", "content": prompt})
-            st.session_state.messages.append({"role": "assistant", "content": response.text})
-            
-        except Exception as e:
-            st.error(f"Maazrat! API Key ka koi masla lag raha hai. Error: {e}")
+    st.session_state.messages.append({"role": "user", "content": prompt})
 
-# ============== CODE KHATAM ==============
+    # AI ka response generate karna
+    with st.chat_message("assistant"):
+        message_placeholder = st.empty()
+        
+        try:
+            # Model se reply generate karwana
+            response = model.generate_content(prompt)
+            
+            # Agar response mil jaye toh use text mein convert karna
+            if response and hasattr(response, 'text') and response.text.strip():
+                ai_response = response.text.strip()
+            else:
+                ai_response = "Maaf kijiyega, main samajh nahi saka. Dubara koshish karein."
+                
+        except Exception as e:
+            # Agar API block ho ya koi aur masla ho
+            ai_response = f"Takneeki masla (Shayad API Key sahi kaam nahi kar rahi). Error: {str(e)}"
+        
+        # Jawab ko screen par dikhana
+        message_placeholder.markdown(ai_response)
+        
+    # Jawab ko history mein save karna
+    st.session_state.messages.append({"role": "assistant", "content": ai_response})
