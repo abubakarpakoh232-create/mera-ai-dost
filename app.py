@@ -23,5 +23,5 @@ if prompt := st.chat_input("Kya poochna hai?"):
         st.markdown(response.text)
 st.session_state.messages.append({"role": "user", "content": prompt})   
 
-# Line 26: AI ka response session state (history) mein save karei
+# Line 26: AI ka response session state (history) mein save karei 
 st.session_state.messages.append({"role": "assistant", "content": response.text})
