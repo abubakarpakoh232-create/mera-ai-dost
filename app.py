@@ -1,31 +1,23 @@
-import os
+import streamlit as st
 from google import genai
 
-# API key environment variable se
-api_key = os.getenv("GEMINI_API_KEY")
+st.set_page_config(page_title="Mera AI Dost", page_icon="🤖")
 
-if not api_key:
-    print("Error: GEMINI_API_KEY set nahi hai")
-    exit()
+st.title("Mera AI Dost 🤖")
 
-client = genai.Client(api_key=api_key)
+# API key Streamlit secrets se lena
+client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
 
-print("🤖 Gemini Chat Ready (type 'exit' to quit)\n")
+user_input = st.text_input("Apna message likho:")
 
-while True:
-    user_input = input("You: ")
-
-    if user_input.lower() == "exit":
-        print("Bye 👋")
-        break
-
+if user_input:
     try:
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-1.5-flash",
             contents=user_input
         )
 
-        print("AI:", response.text)
+        st.write("🤖 AI:", response.text)
 
     except Exception as e:
-        print("Error:", e)
+        st.error(f"Error aaya: {e}")
