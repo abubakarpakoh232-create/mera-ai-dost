@@ -31,5 +31,5 @@ with st.chat_message("assistant"):
         st.markdown(response.text)
     
     # Line 27: AI ka jawab history (session_state) mein save karna
-    st.session_state.messages.append({"role": "assistant", "content": response.text})
+     st.session_state.messages.append({"role": "assistant", "content": response.text})
 
