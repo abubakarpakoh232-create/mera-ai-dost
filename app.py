@@ -3,14 +3,9 @@ import google.generativeai as genai
 
 # 1. API Key aur Model Setup
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+model = genai.GenerativeModel("gemini-1.5-flash")
 
-# Model ko system instruction ke sath setup kar rahe hain taake response short aur sahi aaye
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    system_instruction="Aap ek madadgaar AI dost hain jiska naam 'Mera AI Dost' hai."
-)
-
-# 2. App ka Title aur Header
+# 2. App ka Title
 st.title("Mera AI Dost 🤖")
 st.write("Abu Bakar ka AI Dost")
 
@@ -18,9 +13,9 @@ st.write("Abu Bakar ka AI Dost")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# 4. Purani chat history ko screen par dikhana (Agar usme 'None' na ho)
+# 4. Purani chat history ko filter karke screen par dikhana (Taake 'None' gayab ho jaye)
 for message in st.session_state.messages:
-    if message["content"] is not None and message["content"] != "None":
+    if message.get("content") and message["content"] != "None":
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
@@ -35,18 +30,18 @@ if prompt := st.chat_input("Kya poochna hai?"):
         # Gemini Model ko call karke response lena
         response = model.generate_content(prompt) 
         
-        # Sahi tarike se text extract karna aur check karna
+        # Sahi tarike se text check karna
         if response and hasattr(response, 'text') and response.text:
             ai_response = response.text
         else:
-            ai_response = "Maaf kijiyega, main is waqt jawab nahi de saka. Dobara koshish karein."
+            ai_response = "Maaf kijiyega, main samajh nahi saka. Dobara koshish karein."
             
     except Exception as e:
-        ai_response = f"API Call mein error aaya hai: {str(e)}"
+        ai_response = f"Connect nahi ho saka. Error: {str(e)}"
     
     # AI ka jawab screen par dikhana
     with st.chat_message("assistant"):
         st.markdown(ai_response)
     
-    # AI ka jawab history mein save karna (Ab 'None' kabhi nahi aayega)
+    # AI ka jawab history mein save karna
     st.session_state.messages.append({"role": "assistant", "content": ai_response})
