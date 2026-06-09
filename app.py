@@ -22,4 +22,5 @@ if prompt := st.chat_input("Kya haal hai?"):
     with st.chat_message("assistant"):
         response = model.generate_content(prompt)
         st.markdown(response.text)
-    st.session_state.messages.append({"role": "
+st.session_state.messages.append({"role": "user", "content": prompt})
+st.session_state.messages.append({"role": "assistant", "content": response.text})
