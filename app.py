@@ -26,7 +26,7 @@ st.session_state.messages.append({"role": "user", "content": prompt})
 response = model.generate_content(prompt)
 
     # Line 25: Assistant ka chat box kholna
-    with st.chat_message("assistant"):
+with st.chat_message("assistant"):
         # Line 26: AI ka jawab screen par dikhana
         st.markdown(response.text)
     
