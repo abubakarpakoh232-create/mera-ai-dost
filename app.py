@@ -11,7 +11,7 @@ try:
     genai.configure(api_key=api_key)
     
     # Bilkul standard aur stable model call karna
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModelmodel="(gemini-2.5-flash)"
 except Exception as e:
     st.error("API Key missing hai ya Streamlit Secrets mein sahi se nahi likhi gayi!")
 
