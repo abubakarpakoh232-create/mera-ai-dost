@@ -24,7 +24,7 @@ if prompt := st.chat_input("Kya poochna hai?"):
 st.session_state.messages.append({"role": "user", "content": prompt})   
 
 # Line 26: AI ka response session state (history) mein save karein
-    st.session_state.messages.append({"role": "assistant", "content": response})
+st.session_state.messages.append({"role": "assistant", "content": response})
 
 # Line 28: Thoda sa gap ya divider (Optional)
 st.divider()
