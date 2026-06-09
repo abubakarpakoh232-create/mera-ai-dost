@@ -23,7 +23,7 @@ if prompt := st.chat_input("Kya poochna hai?"):
         st.markdown(response.text)
 st.session_state.messages.append({"role": "user", "content": prompt})   
 # Pehle Gemini model ko call karke response generate karein
-    response = model.generate_content(prompt)
+response = model.generate_content(prompt)
 
     # Line 25: Assistant ka chat box kholna
     with st.chat_message("assistant"):
